@@ -1,0 +1,301 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}{{entete}} form{% endblock %}
+
+
+{% block content %}
+
+<form method="post" class="w-full rounded-lg px-4 py-3 mt-4 text-gray-500 border bg-white dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+    
+    <h4 class="mb-4 mt-1 text-lg font-semibold text-gray-600 dark:text-gray-300">
+        Enregistrement de cours
+    </h4>
+    <span style="color: #0ef700" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{get_flashed_messages()[0]}}
+    </span>
+    {% if error != None %}
+      <span style="color: red" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{error}}
+      </span>
+    {% endif %}
+    <span style="color: red" id="error" ></span>
+   <div class="px-4 py-3 mt-4 0">
+        {{ form.csrf_token }}
+        
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.semestre.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.semestre}}
+                {% for error in form.semestre.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+            
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.module.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.module}}
+                {% for error in form.module.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>   
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.professeur.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.professeur}}
+                {% for error in form.professeur.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.nbreHeureTotal.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.nbreHeureTotal}}
+                {% for error in form.nbreHeureTotal.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.classes.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.classes}}
+                {% for error in form.classes.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        
+        {% if isArchived == True %}
+            <div class="inline-flex mb-4 w-full">
+                <label class="mb-2 w-10" style="width:150px;"> </label>
+                <div style="padding-left: 10%" class="w-full inline-flex">
+                    {{form.isArchived}}
+                    {{form.isArchived.label(class = 'text-gray-900 dark:text-gray-400')}}
+                </div>
+            </div>
+        {% endif %}
+        <div class="inline-flex w-full mt-2">
+            <label class="mb-2 w-10"> </label>
+            <div style="padding-left: 10%" class="w-full flex justify-end">
+                {{ form.submit }}
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+
+    const module = document.querySelector("#module")
+    const professeur = document.querySelector("#professeur")
+    const classe = document.querySelector("#classe")
+    const semestre = document.querySelector("#semestre")
+    const error = document.querySelector("#error")
+    const submit = document.querySelector("#submit")
+
+    const professeursList = {{ professeurs | tojson | safe }};
+    const classesList = {{ classes | tojson | safe }};
+    const enseignementsList = {{ enseignements | tojson | safe }};
+    const coursList = {{ cours | tojson | safe }}; 
+    const semestresList = {{ semestres | tojson | safe }}; 
+    
+    semestre.addEventListener( "change", function(){
+        module.disabled = false;
+        classe.innerHTML = ""
+        error.innerHTML = ""
+        if(professeur.value != ""){
+            var classeDisponibles = findClasseByProfAndSemestre();
+            if (classeDisponibles.length>0){
+                classe.disabled = false;
+                classeDisponibles.forEach(cl => {
+                    const option = document.createElement("option");
+                    option.value = cl.id;
+                    option.innerHTML = cl.libelle;
+                    classe.appendChild(option);
+                });
+            }else{
+                error.innerHTML = "Aucune classe disponible pour ce cours";
+            }
+        }
+    });
+    
+    function professeursByModule() {
+        var listProf = new Array();
+        professeursList.forEach(prof => {
+            var ok = false;
+            enseignementsList.forEach(ens => {
+                if(ens.modules.includes(+module.value) && ens.professeur_id==prof.id){
+                    ok = true;
+                }
+            });
+            if (ok) {
+                listProf.push(prof);
+            }
+        });
+        return listProf;
+    }
+
+    if (module !=null){
+        module.addEventListener( "change", () =>{
+            var profs = professeursByModule();
+            professeur.innerHTML = ""
+            classe.innerHTML = ""
+            error.innerHTML = ""
+            if (profs.length >0){
+                professeur.disabled = false;
+                const option1 = document.createElement("option");
+                option1.value = "";
+                option1.innerHTML = "";
+                professeur.appendChild(option1);
+                profs.forEach(p => {
+                    const option = document.createElement("option");
+                    option.value = p.id;
+                    option.innerHTML = p.nomComplet;
+                    professeur.appendChild(option);
+                });
+            }else{
+                error.innerHTML = "Aucun professeur n'enseigne ce module";
+            }
+        })
+    }
+
+    function findSemestreById(id){
+        for (let index = 0; index < semestresList.length; index++) {
+            if(semestresList[index].id == id){
+               return semestresList[index]; 
+            }
+        }
+        return null
+    }
+
+    function findClasseByProfAndSemestre() {
+        var classeListId = new Array();
+        var classes = new Array();
+        
+        enseignementsList.forEach(ens => {
+            if(ens.modules.includes(+module.value) && ens.professeur_id== +professeur.value ){
+                classeListId.push(ens.classe_id);
+            }
+        });
+        classesList.forEach(cl => {
+            if(classeListId.includes(cl.id) && cl.niveau_id == findSemestreById(+semestre.value).niveau_id){
+                classes.push(cl);
+            }
+        });
+        return classes;
+    }
+
+    if (professeur != null ){
+        professeur.addEventListener( "change" , ()=>{
+            var classeDisponibles = findClasseByProfAndSemestre();
+            classe.innerHTML = ""
+            error.innerHTML = ""
+            if (classeDisponibles.length>0){
+                classe.disabled = false;
+                classeDisponibles.forEach(cl => {
+                    const option = document.createElement("option");
+                    option.value = cl.id;
+                    option.innerHTML = cl.libelle;
+                    classe.appendChild(option);
+                    
+                });
+            }else{
+                error.innerHTML = "Aucune classe disponible pour ce cours";
+            }
+        });
+    }
+
+    function checkIfClasseGetThatModuleYet(classeID) {
+        for (let index = 0; index < coursList.length; index++) {
+            if(coursList[index].classes.includes(+classeID) && coursList[index].module_id == +module.value ){
+                return  true;
+            }   
+        }
+        return false;
+    }
+
+    $('#classe').on('change.select2', function (e) {
+    
+        const tab = $(this).select2('data');
+        const ids =[] ;
+        if ($(this).select2('data')["length"]>=1) {
+            for (let i = 0; i < tab.length; i++) {
+            ids[i] = tab[i]['id'];
+            }
+        }
+        error.innerHTML = ""
+        for (let index = 0; index < ids.length; index++) {
+            var isOkay = true
+            if (checkIfClasseGetThatModuleYet(ids[index])) {
+                error.innerHTML = "La classe ajoutée apprend déjà ce module"
+                isOkay = false;
+            }
+            if(isOkay){
+                submit.disabled=false;
+            }
+        }
+    });
+
+
+
+
+    // $('.select-module').on('change.select2', function (e) {
+    //   const tab = $(this).select2('data');
+    //   const tab2 = $('.select-semestre').select2('data');
+    //   var ids =[] ;
+    //   if ($(this).select2('data')["length"]==1) {
+    //     ids[0] = tab2[0]['id'];
+    //     ids[1] = tab[0]['id'];
+    //   }
+      
+    //   const path = "/cours/plan/module/"+ids;
+    //   $.ajax({
+    //     url: path,
+    //     type: "GET",
+    //     dataType: 'JSON', 
+    //     success:function(data) {
+    //         window.location.href=data
+    //     }
+    //   });
+    // });
+
+    // $('.select-prof').on('change.select2', function (e) {
+    //   const tab = $(this).select2('data');
+    //   var id =0 ;
+    //   if ($(this).select2('data')["length"]==1) {
+    //     id = tab[0]['id'];
+    //   }
+      
+    //   const path = "/cours/plan/professeur/"+id;
+    //   $.ajax({
+    //     url: path,
+    //     type: "GET",
+    //     dataType: 'JSON', 
+    //     success:function(data) {
+    //        window.location.href=data
+    //     }
+    //   });
+    // });
+</script>
+{% endblock %}

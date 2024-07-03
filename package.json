@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  },
+  "dependencies": {
+    "flowbite": "^2.3.0",
+    "fullcalendar": "^6.1.11",
+    "jquery": "^3.7.1",
+    "select2": "^4.1.0-rc.0"
+  }
+}

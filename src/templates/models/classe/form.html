@@ -1,0 +1,120 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Classe form{% endblock %}
+
+
+{% block content %}
+
+<form method="post" class="w-full rounded-lg px-4 py-3 mt-4 text-gray-500 border bg-white dark:border-gray-700 dark:text-gray-400 dark:bg-gray-900">
+    
+    <h4 class="mb-4 mt-1 text-lg font-semibold text-gray-600 dark:text-gray-300">
+        Enregistrement de Classe
+    </h4>
+    <span style="color: #0ef700" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{get_flashed_messages()[0]}}
+    </span>
+    {% if error != None %}
+      <span style="color: red" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{error}}
+      </span>
+    {% endif %}
+    <div class="px-4 py-3 mt-4 0">
+        {{ form.csrf_token }}
+        <div  class="inline-flex mt-1 mb-4 w-full">
+            <label class="mb-2  w-10">
+                {{form.niveau.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.niveau}}
+                {% for error in form.niveau.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %} 
+            </div>
+        </div>
+        <div  class="inline-flex mt-1 mb-4 w-full">
+            <label class="mb-2 w-10">
+                {{form.filiere.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.filiere}}
+                {% for error in form.filiere.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %} 
+            </div>
+        </div>
+        <div  class="inline-flex mt-1 mb-4 w-full" >
+            <label  class="mb-2  w-10">
+                {{form.libelle.label(class ='text-gray-900 dark:text-gray-400')}}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.libelle}} 
+                {% for error in form.libelle.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {% if isArchived == True %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2  w-10">
+                    {{form.effectif.label(class ='text-gray-900 dark:text-gray-400') }}
+                </label>
+                <div style="padding-left:10%" class="w-full">
+                    {{form.effectif}}
+                </div>
+            </div>
+            <div class="inline-flex mb-4 w-full">
+                <label class="mb-2 w-10"> </label>
+                <div style="padding-left: 10%" class="w-full inline-flex">
+                    {{form.isArchived}}
+                    {{form.isArchived.label(class = 'text-gray-900 dark:text-gray-400')}}
+                </div>
+            </div>
+        {% endif %}
+        <div class="inline-flex w-full">
+            <label class="mb-2 w-10"> </label>
+            <div style="padding-left: 10%" class="w-full flex justify-end">
+                {{ form.submit }}
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        const niveau = document.querySelector("#niveau");
+        const filiere = document.querySelector("#filiere");
+        const libelle = document.querySelector("#libelle");
+
+        var filiereLibelle = filiere.options[filiere.selectedIndex].innerText
+        var niveauLibelle = niveau.options[niveau.selectedIndex].innerText
+
+        if(niveau !=null){
+            niveau.addEventListener("change", function (event) {
+                const option = event.target.options[niveau.selectedIndex];
+                niveauLibelle = option.innerText
+                if(filiereLibelle !=""){ 
+                    libelle.value = option.innerText + " " + filiereLibelle
+                }
+            }) 
+        }
+
+        if(filiere !=null ){
+            filiere.addEventListener("change", function (event) {
+                const option = event.target.options[filiere.selectedIndex];
+                filiereLibelle = option.innerText 
+                if(niveauLibelle !=""){
+                    libelle.value = niveauLibelle + " " + option.innerText
+                }
+            }) 
+        }
+        
+
+    </script>
+{% endblock %}
+
+
+

@@ -1,0 +1,119 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Absence{% endblock %}
+
+{% block content %}
+<div class="w-full flex mt-8">
+    <form method="Post" action=""
+      {% if connectedUser.role.libelle == 'ROLE_ETUDIANT' %} style="width: 30%;" {% else %} style="width: 60%;"{% endif %}
+      class="w-auto rounded-lg px-4 py-3 mt-4 text-gray-500 border bg-white dark:border-gray-700 dark:text-gray-400 dark:bg-gray-900"
+      >
+      <div  class="inline-flex mt-1 mb-2 w-full justify-center">
+      {% if connectedUser.role.libelle != 'ROLE_ETUDIANT'  %}
+        <div style="width: 38%; margin-right:80px;" class="text-base px-4 py-3 border border-gray-300 rounded-md dark:bg-zinc-600">
+          <label for="select-absence-etudiant" class="block mb-2 font-medium text-gray-900 dark:text-white">Etudiant</label>
+          <select id="select-absence-etudiant" style="width:80%;" class="bg-gray-50 dark:bg-white border border-gray-300 text-gray-900 rounded focus:ring-blue-500 focus:border-blue-500 block p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-700 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option data-path="{{url_for('showAbsenceByEtudiant',id = 0)}}" value='0'  >All</option>
+            {% for item in etudiants %}
+              <option data-path="{{url_for('showAbsenceByEtudiant',id = item.id)}}"
+              {% if selectedValue['etudiant'] is defined and selectedValue['etudiant'].id== item.id %}selected{% endif %} 
+              value="{{item.id}}">{{item.matricule}}</option>  
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+        <div {% if connectedUser.role.libelle == 'ROLE_ETUDIANT' %} style="width: 80%;" {% else %} style="width: 38%;"{% endif %}
+          class="text-base px-4 py-3 border border-gray-300 rounded-md dark:bg-zinc-600"
+          >
+          <label for="select-absence-semestre" class="block mb-2 font-medium text-gray-900 dark:text-white">Semestre</label>
+          <select id="select-absence-semestre" style="width:80%;" class="bg-gray-50 dark:bg-white border border-gray-300 text-gray-900 rounded focus:ring-blue-500 focus:border-blue-500 block p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-700 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option data-path="{{url_for('showAbsenceBySemestre',id = 0)}}" value='0'>All</option>
+            {% for item in semestres %}
+              <option data-path="{{ url_for('showAbsenceBySemestre',id = item.id) }}"
+              {% if selectedValue['semestre'] is defined and selectedValue['semestre'].id == item.id %}selected{% endif %} 
+              value="{{item.id}}">{{item.libelle}}</option>  
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </form>
+</div>
+<h4 class="mb-4 mt-4 text-lg font-semibold text-gray-500 dark:text-white">
+  Les absences de {{anneeEncours.libelle}}
+</h4>
+
+<div class="w-full overflow-hidden rounded-lg shadow-xs">
+    <div class="w-full overflow-x-auto">
+      <table class="w-full whitespace-no-wrap">
+        <thead>
+          <tr
+            class="text-sm text-left font-semibold tracking-wide text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-900"
+            style="color:#eb1616;"
+          >
+            <th class="px-4 py-3 ">N°</th>
+            <th class="px-4 py-3 ">Date</th>
+            <th class="px-4 py-3 "> Cours</th>
+            <th class="px-4 py-3 ">Professeur</th>
+            <th class="px-4 py-3 ">Horaire</th>
+            <th class="px-4 py-3 ">Semestre</th>
+            <th class="px-4 py-3 ">Matricule</th>
+            <th class="px-4 py-3 ">L'Absent</th>
+          </tr>
+        </thead>
+        <tbody
+          class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-900"
+        >
+        {% for ab in absences %}
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-3 text-sm">
+              {{ab.id}}
+            </td>
+            <td class="px-4 py-3 text-sm">
+              {{ab.seance.date.strftime("%d-%m-%Y")}}
+            </td>
+            <td class="px-4 py-3 text-sm">
+              {{ab.seance.cours.module.libelle}}
+            </td>
+            <td class="px-4 py-3 text-sm">
+              {{ ab.seance.professeur.nomComplet if ab.seance.professeur != None else ab.seance.cours.professeur.nomComplet }}
+            </td>
+            <td class="px-4 py-3 text-sm">
+              {{ab.seance.heureD.strftime("%H:%M")}} à {{ab.seance.heureF.strftime("%H:%M")}}
+            </td>
+            <td class="px-4 py-3 text-sm">
+              {{ab.seance.cours.semestre.libelle}}
+            </td>
+            <td class="px-4 py-3 text-sm">
+              {{ab.etudiant.matricule}}
+            </td>
+            <td class="px-4 py-3 text-sm">
+              {{ab.etudiant.nomComplet}}
+            </td>
+          </tr>
+        {% endfor %}    
+        </tbody>
+      </table>
+    </div>
+    <div class="">
+      {% include "shared/pagination.html" %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).ready(function() {
+            $('#select-absence-etudiant').select2({
+            closeOnSelect: false
+            });
+        });
+
+        $('#select-absence-etudiant').on('change.select2', function (e) {
+          const path = $(this).find(':selected').data('path');
+          window.location.href=path;
+        });
+        
+        const absence_semestre =document.querySelector('#select-absence-semestre');
+        getData(absence_semestre);
+    </script>
+{% endblock %}

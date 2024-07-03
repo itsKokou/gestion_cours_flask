@@ -1,0 +1,38 @@
+{# tailwindcss Sliding pagination control implementation #}
+{% if pagination.total_pages > 1 %}
+<div class="flex justify-end px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-600 dark:bg-gray-900">
+    
+    <div class="flex col-span-4 mt-2 justify-end sm:mt-auto sm:justify-end">
+        <div class="Table navigation inline-flex items-center">
+        
+        {% if pagination.has_prev %}
+            <a rel="prev" href="{{session['path_info']}}?page={{pagination.page - 1}}" class="px-3 py-2 border border-r-0 border-gray-400 rounded-l-lg text-red-600 bg-white focus:outline-none focus:shadow-outline-purple hover:bg-gray-300  ">&laquo;&nbsp;précédent</a>
+        {% else %}
+            <a class="px-3 py-2 border border-r-0 border-gray-400  rounded-l-lg focus:outline-none focus:shadow-outline-purple bg-white  disabled">&laquo;&nbsp;précédent</a>
+        {% endif %}
+
+        {% for page in pagination.pages %}
+            {% if page != pagination.page %}
+                {% if page != None %}
+                    <a href="{{session['path_info']}}?page={{page}}" class="px-3 py-2 bg-white border hover:bg-gray-300 text-red-600  border-r-0 border-gray-400  focus:outline-none focus:shadow-outline-red">
+                        {{ page }}
+                    </a>
+                {% else %}
+                    <span class="px-3 py-2 bg-white border hover:bg-gray-300 text-red-600  border-r-0 border-gray-400  focus:outline-none focus:shadow-outline-red">...</span>
+                {% endif %}
+            {% else %}
+                <span class="px-3 py-2 focus:outline-none focus:shadow-outline-r text-white transition-colors duration-150 bg-red-600 border border-r-0 border-red-600">{{ page }}</span>
+            {% endif %}
+        {% endfor %}
+
+        {% if pagination.has_next %}
+            <a rel="next" href="{{session['path_info']}}?page={{pagination.page + 1 }}"  class= "px-3 border bg-white text-red-600 border-r-0 border-gray-400 hover:bg-gray-300  py-2 rounded-r-lg focus:outline-none focus:shadow-outline-purple" >
+                suivant &nbsp;&raquo;
+            </a>
+        {% else %}
+            <a class="px-3 border border-r-0 border-gray-400  py-2 rounded-r-lg focus:outline-none bg-white focus:shadow-outline-purple disabled">suivant&nbsp;&raquo;</a>
+        {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}

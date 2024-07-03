@@ -1,0 +1,553 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Seance form{% endblock %}
+
+
+{% block content %}
+
+<form method="post" class="w-full rounded-lg px-4 py-3 mt-4 text-gray-500 border bg-white dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+    
+    <h4 class="mb-4 mt-1 text-lg font-semibold text-gray-600 dark:text-gray-300">
+        Enregistrement de la séance de cours
+    </h4>
+
+    <span style="color: #0ef700" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{get_flashed_messages()[0]}}
+    </span>
+    {% if error != None %}
+      <span style="color: red" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{error}}
+      </span>
+    {% endif %}
+    <span style="color: red" id="error" ></span>
+   <div class="px-4 py-3 mt-4 0">
+        {{ form.csrf_token }}
+    
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.date.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.date}}
+                {% for error in form.date.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+            
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.heureD.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.heureD}}
+                {% for error in form.heureD.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>   
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.heureF.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.heureF}}
+                {% for error in form.heureF.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>   
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.code.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.code}}
+                {% for error in form.code.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.salle.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.salle}}
+                {% for error in form.salle.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.professeur.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.professeur}}
+                {% for error in form.professeur.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        
+        <div class="inline-flex w-full mt-2">
+            <label class="mb-2 w-10"> </label>
+            <div style="padding-left: 10%" class="w-full flex justify-end">
+                {{ form.submit }}
+            </div>
+        </div>
+    </div>
+
+
+
+
+    {# <div class="px-4 py-3 mt-4 0">
+        {{form_start(form)}}
+            <div  class="inline-flex mt-1 mb-4 w-full" >
+                <label  class="mb-2  w-10">
+                    {{form_label(form.date) }}
+                </label>
+                <div style="padding-left:10%" class="w-full">{{form_widget(form.date)}} 
+                <span class="text-red-600">{{errors is defined and errors['dateError'] is defined ? errors['dateError']:'' }}</span></div>
+            </div>
+        {% if form.heureD is defined %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2 w-10">
+                    {{form_label(form.heureD,'Heure_Début') }}
+                </label>
+                <div style="padding-left:10%" class="w-full">{{form_widget(form.heureD)}} 
+                <span class="text-red-600">{{errors is defined and errors['heureDError'] is defined ? errors['heureDError']:'' }}</span></div>
+            </div>
+        {% endif %}
+        {% if form.heureF is defined %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2 w-10">
+                    {{form_label(form.heureF,'Heure_Fin') }}
+                </label>
+                <div style="padding-left:10%" class="w-full">{{form_widget(form.heureF)}} 
+                <span class="text-red-600">{{errors is defined and errors['heureFError'] is defined ? errors['heureFError']:'' }}</span></div>
+            </div>
+        {% endif %}
+        {% if form.isProf is defined %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2 w-14">
+                    {{form_label(form.isProf) }}
+                </label>
+                <div style="padding-left:8%;" class="w-fit">{{form_widget(form.isProf)}} </div>
+            </div>
+        {% endif %}
+        {% if form.professeur is defined %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2  w-10">
+                    {{form_label(form.professeur) }}
+                </label>
+                <div style="padding-left:10%" class="w-full">{{form_widget(form.professeur)}} <span>{{form_errors(form.professeur)}}</span></div>
+            </div>
+        {% endif %}
+        {% if form.salle is defined %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2 w-10">
+                    {{form_label(form.salle) }}
+                </label>
+                <div style="padding-left:10%" class="w-full">{{form_widget(form.salle)}} <span>{{form_errors(form.salle)}}</span></div>
+            </div>
+        {% endif %}
+        {% if form.codeSession is defined %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2 w-10">
+                    {{form_label(form.codeSession,'Code_Session') }}
+                </label>
+                <div style="padding-left:10%" class="w-full">{{form_widget(form.codeSession)}} <span>{{form_errors(form.codeSession)}}</span></div>
+            </div>
+        {% endif %}
+        {% if form.lieu is defined %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2 w-14">
+                    {{form_label(form.lieu) }}
+                </label>
+                <div style="padding-left:8%;" class="w-fit">{{form_widget(form.lieu)}} </div>
+            </div>
+        {% endif %}
+        {% if form.quitter is defined %}
+            <a href="{{asset("/session/plan/abort")}}">{{form_row(form.quitter) }}</a>
+        {% endif %}
+        {% if form.isArchived is defined %}
+            <div  class="inline-flex mt-1 mb-4 w-full">
+                <label class="mb-2  w-10">
+                </label>
+                <div style="padding-left:10%" class="w-full inline-flex">{{form_widget(form.isArchived)}}{{form_label(form.isArchived,'Archivé')}}</div>
+            </div>
+        {% endif %}
+        {{form_end(form)}}
+    </div> #}
+
+</form>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+
+    const dateField = document.querySelector("#date")
+    const heureDField = document.querySelector("#heureD")
+    const heureFField = document.querySelector("#heureF")
+    const codeField = document.querySelector("#code")
+    const salleField = document.querySelector("#salle")
+    const professeurField = document.querySelector("#professeur")
+    const errorField = document.querySelector("#error")
+    const submitField = document.querySelector("#submit")
+
+
+    const coursObject = {{ cours | tojson | safe }}; 
+    const seancesList = {{ seances | tojson | safe }}; 
+    const sallesList = {{ salles | tojson | safe }};
+    const classeList =  {{ classes | tojson | safe }};
+    const coursList =  {{ courss | tojson | safe }};
+    const enseignementsList = {{ enseignements | tojson | safe }};
+    const professeursList = {{ professeurs | tojson | safe }};
+
+
+    dateField.addEventListener("input", () => {
+        heureDField.disabled = true;
+        heureFField.disabled = true;
+        codeField.disabled = true;
+        salleField.disabled = true;
+        professeurField.disabled = true;
+        submitField.disabled = true;
+
+        errorField.innerHTML = "";
+        var today = new Date();
+        var date = new Date(dateField.value);
+
+        if(today >= date){
+            errorField.innerHTML = "Une seance ne peut se faire dans le passé";
+        }else{
+            if (date.getDay()==0) {
+                errorField.innerHTML = "Une seance ne peut se faire un dimanche";
+                heureDField.disabled = true;
+            }else{
+                if(date.getDay()!=NaN){
+                    heureDField.disabled = false;
+                }
+            }
+        }
+    });
+
+    heureDField.addEventListener("change", () => {
+        heureFField.disabled = true;
+        codeField.disabled = true;
+        salleField.disabled = true;
+        professeurField.disabled = true;
+        submitField.disabled = true;
+
+        errorField.innerHTML = "";
+        var heureMinutes = heureDField.value.split(":");
+        var heure = parseInt(heureMinutes[0], 10); // Convertir en nombre entier (base 10)
+
+        if (heure<8 || heure>17) {
+            errorField.innerHTML = "L'heure de début doit être entre 8:00 et 17:00";
+            heureFField.disabled = true;
+        }else{
+            heureFField.disabled = false;
+        }
+    });
+
+    heureFField.addEventListener("change", () => {
+        codeField.disabled = true;
+        salleField.disabled = true;
+        professeurField.disabled = true;
+        submitField.disabled = true;
+
+        errorField.innerHTML = "";
+        var heureMinutes = heureFField.value.split(":");
+        var heure = parseInt(heureMinutes[0], 10); // Convertir en nombre entier (base 10)
+
+        if (heure<11 || heure>20) {
+            errorField.innerHTML = "L'heure de fin doit être entre 11:00 et 20:00";
+        }else{
+            if(heure - parseInt(heureDField.value.split(":")[0], 10) <3 || heure - parseInt(heureDField.value.split(":")[0], 10) >4 ){
+                errorField.innerHTML = "La durée d'une séance doit être de 3 ou 4 heures";
+            }else{
+                if(heure>17){
+                    codeField.disabled = false;
+                }else{
+                    //verifier si prof du cours libre
+                    if(verifierDisponibiliteProf(+coursObject.professeur_id)==1){
+                        errorField.innerHTML = "";
+                    }else{
+                        errorField.innerHTML = "Le professeur n'est pas disponible! Pensez à son remplaçant ";
+                    }
+
+                    //charger salles
+                    var salles = salleByCapacite();
+                    var SallesDisponibles = new Array();
+                    salles.forEach(s => {
+                        var seancesSalle = findSeanceBySalle(s.id);
+                        var disponible = disponibilite(seancesSalle,new Date(dateField.value),parseInt(heureDField.value.split(":")[0], 10),heure)
+                        if(disponible==1){
+                            SallesDisponibles.push(s);
+                        }
+                    });
+                    if(SallesDisponibles.length >0){
+                        salleField.disabled = false;
+                        codeField.disabled = false;
+                        const option = document.createElement("option");
+                        option.value = 0
+                        option.innerHTML = "";
+                        salleField.appendChild(option);
+                        SallesDisponibles.forEach(salle =>{
+                            const option = document.createElement("option");
+                            option.value = salle.id;
+                            option.innerHTML = salle.libelle;
+                            salleField.appendChild(option);
+                        });
+                    }else{
+                        codeField.disabled = false;
+                    }
+                }
+            }
+        }
+    });
+
+    function findSeanceBySalle(salleId) {
+        var seancesTab = new Array();
+        seancesList.forEach(seance => {
+            if (seance.salle_id != null && +seance.salle_id == +salleId){
+                seancesTab.push(seance);
+            }
+        });
+        return seancesTab;
+    }
+
+    function findSeanceByProfesseur(profId, coursIds) {
+        var seancesTab = new Array();
+        seancesList.forEach(seance => {
+            if ( ( coursIds.includes(+seance.cours_id) && seance.professeur_id == null) || (+seance.professeur_id == +profId)){
+                seancesTab.push(seance);
+            }
+        });
+        return seancesTab;
+    }
+
+    function salleByCapacite() {
+        var capacite = 0;
+        classeList.forEach(cl => {
+            capacite += cl.effectif;
+        });
+        var sallesCapables = new Array();
+        sallesList.forEach(salle => {
+            if(salle.nbrePlace >= capacite){
+                sallesCapables.push(salle);
+            }
+        });
+        return sallesCapables;
+    }
+
+
+    function disponibilite(seances, date, heureD, heureF) {
+        var isDispo = 1;
+
+        seances.forEach(session => {
+            var dateParts = session.date.split("-");
+            sessionDate = new Date(dateParts[2],dateParts[1]- 1,dateParts[0]);
+            sessionHeureD = parseInt(session.heureD.split(":")[0], 10)
+            sessionHeureF = parseInt(session.heureF.split(":")[0], 10);
+
+            if (date.getTime() === sessionDate.getTime()) {
+                if (sessionHeureD < heureF && heureF < sessionHeureF) {
+                    isDispo = 0;
+                } else {
+                    if (sessionHeureD < heureD && heureD < sessionHeureF) {
+                        isDispo = 0;
+                    } else {
+                        if (heureD <= sessionHeureD && sessionHeureD <= sessionHeureF && sessionHeureF <= heureF) {
+                            isDispo = 0;
+                        } else {
+                            if (sessionHeureD <= heureD && heureD <= heureF && heureF <= sessionHeureF) {
+                                isDispo = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        return isDispo;
+    };
+
+    function verifierDisponibiliteProf(profId) {
+        //charger les ids des cours du profs
+        var coursIds = new Array();
+        coursList.forEach(co => {
+            if (+co.professeur_id == +profId) {
+                coursIds.push(+co.id);
+            }
+        });
+        //recup seances du profs
+        var seancesProf = new Array();
+        findSeanceByProfesseur(+profId,coursIds).forEach(sc => {
+            seancesProf.push(sc);
+        });
+        
+        //verifier dispo
+        return disponibilite(seancesProf,new Date(dateField.value),parseInt(heureDField.value.split(":")[0], 10),parseInt(heureFField.value.split(":")[0], 10));
+    }
+
+    function professeursByModule() {
+        var listProf = new Array();
+        professeursList.forEach(prof => {
+            var ok = false;
+            enseignementsList.forEach(ens => {
+                if(ens.modules.includes(+coursObject.module_id) && ens.professeur_id==prof.id){
+                    ok = true;
+                }
+            });
+            if (ok) {
+                listProf.push(prof);
+            }
+        });
+        return listProf;
+    }
+
+    function chargerProfSelect() {
+        var profDisponibles = new Array()
+        var profsModule = professeursByModule()
+        profsModule.forEach(p => {
+            if(verifierDisponibiliteProf(p.id) == 1) {
+                profDisponibles.push(p);
+            }
+        });
+        professeurField.innerHTML = "";
+        if (profDisponibles.length>0) {
+            const option = document.createElement("option");
+            option.value = 0
+            option.innerHTML = "";
+            professeurField.appendChild(option);
+            profDisponibles.forEach(pr =>{
+                const option = document.createElement("option");
+                option.value = pr.id;
+                option.innerHTML = pr.nomComplet;
+                professeurField.appendChild(option);
+            });
+        }
+    }
+
+    codeField.addEventListener("keyup",_=>{
+        let valCode=codeField.value;
+        if(valCode!="" && valCode.length >=3){
+            salleField.disabled=true;
+            //charger prof
+            professeurField.disabled = false;
+            chargerProfSelect();
+        }else{
+            salleField.disabled=false;
+            professeurField.disabled = true;
+        }
+        //verifier si erreur est vide pour activer submit
+        if(errorField.innerHTML==""){
+            submitField.disabled = false;
+        }else{
+            submitField.disabled = true;
+        }
+    });
+
+    salleField.addEventListener( "change", () => {
+        let salle = salleField.value;
+        if(salle != 0){
+            codeField.disabled=true;
+            //charger prof
+            professeurField.disabled = false;
+            chargerProfSelect();
+        }else{
+            codeField.disabled=false;
+            professeurField.disabled = true;
+        }
+        //verifier si erreur est vide pour activer submit
+        if(errorField.innerHTML==""){
+            submitField.disabled = false;
+        }else{
+            submitField.disabled = true;
+        }
+    });
+
+    professeurField.addEventListener( "change", () => {
+        //verifier si erreur est vide pour activer submit
+        if (+professeurField.value != 0) {
+            errorField.innerHTML="";
+            submitField.disabled = false;  
+        }else{
+            errorField.innerHTML = "Le professeur n'est pas disponible! Pensez à son remplaçant ";
+            submitField.disabled = false;
+        }
+    });
+
+    
+    
+    // const isProf = document.querySelector(".isProf");
+    // if(isProf != null){
+    //         isProf.addEventListener("click", function (event) {
+    //         const radio = document.getElementsByName("session[isProf]");
+    //         var val;
+    //         for (i = 0; i < radio.length; i++) {
+    //             if (radio[i].checked){
+    //             val = radio[i].value;
+    //             }
+    //         }
+    //         redirectToPath("/session/plan/isprof/"+val);
+    //     });
+    // }
+
+    // const lieu = document.querySelector(".lieu");
+    // if(lieu != null){
+    //         lieu.addEventListener("click", function (event) {
+    //         const radio = document.getElementsByName("session[lieu]");
+    //         var val;
+    //         for (i = 0; i < radio.length; i++) {
+    //             if (radio[i].checked){
+    //             val = radio[i].value;
+    //             }
+    //         }
+    //         redirectToPath("/session/plan/lieu/"+val);
+    //     });
+    // }
+
+    // $('.select-prof').on('change.select2', function (e) {
+    //   const tab = $(this).select2('data');
+    //   var id =0 ;
+    //   if ($(this).select2('data')["length"]==1) {
+    //     id = tab[0]['id'];
+    //   }
+      
+    //   const path = "/session/plan/professeur/"+id;
+    //   $.ajax({
+    //     url: path,
+    //     type: "GET",
+    //     dataType: 'JSON', 
+    //     success:function(data) {
+    //        window.location.href=data
+    //     }
+    //   });
+    // });
+
+    // $('.salle').on('change.select2', function (e) {
+    //   const tab = $(this).select2('data');
+    //   var id =0 ;
+    //   if ($(this).select2('data')["length"]==1) {
+    //     id = tab[0]['id'];
+    //   }
+      
+    //   const path = "/session/plan/salle/"+id;
+    //   $.ajax({
+    //     url: path,
+    //     type: "GET",
+    //     dataType: 'JSON', 
+    //     success:function(data) {
+    //        window.location.href=data
+    //     }
+    //   });
+    // });
+</script>
+{% endblock %}

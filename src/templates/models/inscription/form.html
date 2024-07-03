@@ -1,0 +1,130 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}{{entete}} form{% endblock %}
+
+
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" class="w-full rounded-lg px-4 py-3 mt-4 text-gray-500 border bg-white dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+    
+    <h4 class="mb-4 mt-1 text-lg font-semibold text-gray-600 dark:text-gray-300">
+        {{entete}}
+    </h4>
+    <span style="color: #0ef700" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{get_flashed_messages()[0]}}
+    </span>
+    {% if error != None %}
+      <span style="color: red" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{error}}
+      </span>
+    {% endif %}
+   <div class="px-4 py-3 mt-4 0">
+        {{ form.csrf_token }}
+        {{ form.etudiant.csrf_token }}
+        {% if entete =="Réinscription" %}
+            <div  class="inline-flex mt-1 mb-2 w-full" >
+                <label  class="mb-2  w-10" style="width:150px;">
+                    {{form.matricule.label(class ='text-gray-900 dark:text-gray-400') }}
+                </label>
+                <div style="padding-left:10%" class="w-full">
+                    {{form.matricule}}
+                    {% for error in form.matricule.errors %}
+                        <small class="text-red-600">{{error}}</small>
+                    {% endfor %}
+                </div> 
+            </div>
+        {% endif %}       
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.etudiant.nomComplet.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.etudiant.nomComplet}}
+                {% for error in form.etudiant.nomComplet.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>   
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.etudiant.login.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.etudiant.login}}
+                {% for error in form.etudiant.login.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.etudiant.password.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.etudiant.password}}
+                {% for error in form.etudiant.password.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.etudiant.tuteur.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.etudiant.tuteur}}
+                {% for error in form.etudiant.tuteur.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.classe.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.classe}}
+                {% for error in form.classe.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:150px;">
+                {{form.etudiant.photo.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.etudiant.photo}}
+                {% for error in form.etudiant.photo.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        
+        <div class="inline-flex w-full mt-2">
+            <label class="mb-2 w-10"> </label>
+            <div style="padding-left: 10%" class="w-full flex justify-end">
+                {{ form.submit }}
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+    const matricule =  document.querySelector("#matricule");
+    if(matricule!=null){
+        matricule.addEventListener("keyup", function (event) {
+            if (matricule.value.length >=6) {
+                redirectToPath("/reinscription/"+matricule.value);
+            }
+        });
+    }
+</script>
+{% endblock %}

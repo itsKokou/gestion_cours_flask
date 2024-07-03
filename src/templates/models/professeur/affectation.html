@@ -1,0 +1,65 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Affectation form{% endblock %}
+
+
+{% block content %}
+
+<form method="post" class="w-full rounded-lg px-4 py-3 mt-4 text-gray-500 border bg-white dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+    
+    <h4 class="mb-4 mt-1 text-lg font-semibold text-gray-600 dark:text-gray-300">
+        Enregistrement de Classe pour enseignement
+    </h4>
+    <span style="color: #0ef700" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{get_flashed_messages()[0]}}
+    </span>
+    {% if error != None %}
+      <span style="color: red" class="transition-opacity duration-300 ease-in-out" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => { show = false }, 3000)">
+        {{error}}
+      </span>
+    {% endif %}
+    <div class="px-4 py-3 mt-4 0">
+        {{ form.csrf_token }}
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:200px;">
+                {{form.classe.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.classe}}
+                {% for error in form.classe.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        <div  class="inline-flex mt-1 mb-2 w-full" >
+            <label  class="mb-2  w-10" style="width:200px;">
+                {{form.modules.label(class ='text-gray-900 dark:text-gray-400') }}
+            </label>
+            <div style="padding-left:10%" class="w-full">
+                {{form.modules}}
+                {% for error in form.modules.errors %}
+                    <small class="text-red-600">{{error}}</small>
+                {% endfor %}
+            </div> 
+        </div>
+        
+        <div class="inline-flex w-full">
+            <label class="mb-2 w-10"> </label>
+            <div style="padding-left: 10%" class="w-full flex justify-end">
+                {{ form.submit }}
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+</script>
+{% endblock %}

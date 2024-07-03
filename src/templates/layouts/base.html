@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}
+        
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+            <link rel="stylesheet" href="{{url_for('static',filename='css/output.css')}}" />
+            <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}" />
+            <link rel="stylesheet" href="{{url_for('static',filename='css/tailwind.output.css')}}" />
+            <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+            <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.css" rel="stylesheet">
+            {# <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet"> #}
+           
+        {% endblock %}
+
+    </head>
+    <body >
+        {% block body %}
+        <div
+            class="flex h-screen bg-gray-50 dark:bg-gray-900"
+            :class="{ 'overflow-hidden': isSideMenuOpen}"
+        >
+            <!-- Desktop sidebar -->
+            {% include "shared/sidebar.html" %}
+            
+            <div class="flex flex-col flex-1">
+                {% include 'shared/topbar.html'   %}
+                <main class="h-full pb-8 overflow-y-auto bg-gray-200 dark:bg-black">
+                    <div class="container px-6 mx-auto grid">
+                        {% block content %}
+                            
+                        {% endblock %}
+                    </div> 
+                </main>
+            </div>
+        </div> 
+        
+        {% endblock %}
+
+
+        {% block javascripts %}
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js" integrity="sha256-i4vDW9EgtaJmeauDDymtNF2omPZ1fCKpf4w1gBlU1IE=" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js" integrity="sha256-J37ZtjEw94oWBNZ9w/XC73raGXE9t10//XHJfKz2QCM=" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.all.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+            <script src="{{ url_for('static',filename='/js/init-alpine.js') }}"></script>
+            <script src="{{ url_for('static',filename='/js/focus-trap.js') }}" defer></script>
+            <script src="{{ url_for('static',filename='/js/js.js') }}"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js') }}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+            <script>
+                const anneeSelect = document.querySelector('#select-annee');
+                if(anneeSelect!=null){
+                    getData(anneeSelect);
+                }
+                const classeSelect = document.querySelector('#select-classe');
+                if(classeSelect!=null){
+                    getData(classeSelect);
+                }
+                const profSelect = document.querySelector('#select-professeur');
+                if(profSelect!=null){
+                    getData(profSelect);
+                }
+            </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+            {% block js %}
+                
+            {% endblock %}
+        {% endblock %}
+    </body>
+</html>
